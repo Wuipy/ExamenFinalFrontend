@@ -4,11 +4,11 @@ import type { FraudReport, FraudReportPayload } from "@/types/fraud";
 function getFraudsEndpoint(): string {
   if (!API_URL) {
     throw new Error(
-      "La URL del backend no está configurada. Defina VITE_API_URL en Netlify o en su archivo .env."
+      "La URL del backend no está configurada. Defina VITE_API_URL en Railway, Netlify o en su archivo .env."
     );
   }
 
-  return `${API_URL}/api/frauds`;
+  return `${API_URL}/api/Fraud`;
 }
 
 async function getErrorMessage(response: Response): Promise<string> {
