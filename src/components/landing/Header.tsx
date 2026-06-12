@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { ClipboardList, Menu, X } from "lucide-react";
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import labcibeLogo from "@/assets/LabCIBE-UNA.jpg";
 import { REPORTS_URL } from "@/lib/config";
 
@@ -102,6 +102,13 @@ const Header = () => {
                 {item.label}
               </button>
             ))}
+            <Link
+              to="/reportes"
+              className="inline-flex items-center gap-2 text-foreground hover:text-primary transition-colors font-medium"
+            >
+              <ClipboardList className="h-4 w-4" />
+              Reportes
+            </Link>
             <Button
               className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full font-semibold shadow-md hover:shadow-lg transition-all duration-300"
               onClick={goToReportWizard}
@@ -149,6 +156,14 @@ const Header = () => {
                   {item.label}
                 </button>
               ))}
+              <Link
+                to="/reportes"
+                onClick={closeMenu}
+                className="inline-flex items-center gap-2 py-2 px-4 text-foreground hover:bg-muted rounded-lg transition-colors font-medium"
+              >
+                <ClipboardList className="h-4 w-4" />
+                Reportes
+              </Link>
               <Button
                 className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold shadow-md hover:shadow-lg transition-all duration-300 w-full"
                 onClick={goToReportWizard}

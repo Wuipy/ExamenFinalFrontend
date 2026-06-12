@@ -9,12 +9,6 @@ import {
   UserX,
 } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { getFraudReports } from "@/lib/fraudReportService";
 import type { FraudReport } from "@/types/fraud";
 
@@ -31,6 +25,60 @@ function formatCreatedAt(value: string): string {
     dateStyle: "long",
     timeStyle: "short",
   }).format(date);
+}
+
+function ReportField({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof UserX;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+        <Icon className="h-4 w-4 shrink-0 text-primary" />
+        {label}
+      </div>
+      <p className="whitespace-pre-wrap rounded-md bg-muted/40 px-4 py-3 text-sm leading-relaxed text-foreground">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function MobileReportCard({ report }: { report: FraudReport }) {
+  return (
+    <article className="rounded-xl border border-border/60 bg-card p-5 shadow-soft">
+      <div className="mb-4 flex items-start justify-between gap-3 border-b border-border/60 pb-4">
+        <p className="text-sm font-semibold text-foreground">
+          Reporte #{report.id}
+        </p>
+        <div className="inline-flex items-center gap-2 text-xs text-muted-foreground">
+          <Calendar className="h-3.5 w-3.5 shrink-0 text-primary" />
+          <time dateTime={report.createdAt}>
+            {formatCreatedAt(report.createdAt)}
+          </time>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <ReportField
+          icon={UserX}
+          label="Detalles del impostor"
+          value={report.impostorDetails}
+        />
+        <ReportField icon={Phone} label="Contacto" value={report.contactInfo} />
+        <ReportField
+          icon={MessageSquare}
+          label="Comentarios"
+          value={report.comments.trim() || "Sin comentarios"}
+        />
+      </div>
+    </article>
+  );
 }
 
 const FraudReportsList = () => {
@@ -76,7 +124,7 @@ const FraudReportsList = () => {
       <div
         role="status"
         aria-live="polite"
-        className="flex flex-col items-center justify-center gap-4 rounded-lg border border-border bg-muted/30 px-6 py-16 text-center"
+        className="flex flex-col items-center justify-center gap-4 rounded-xl border border-border bg-muted/30 px-6 py-16 text-center"
       >
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <p className="text-base font-medium text-foreground">
@@ -91,7 +139,7 @@ const FraudReportsList = () => {
       <div
         role="alert"
         aria-live="assertive"
-        className="flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/10 px-6 py-5"
+        className="flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/10 px-6 py-5"
       >
         <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
         <div>
@@ -109,7 +157,7 @@ const FraudReportsList = () => {
       <div
         role="status"
         aria-live="polite"
-        className="rounded-lg border border-border bg-muted/30 px-6 py-16 text-center"
+        className="rounded-xl border border-border bg-muted/30 px-6 py-16 text-center"
       >
         <ShieldAlert className="mx-auto mb-4 h-10 w-10 text-muted-foreground" />
         <p className="text-lg font-medium text-foreground">
@@ -129,56 +177,63 @@ const FraudReportsList = () => {
         {reports.length === 1 ? "reporte registrado" : "reportes registrados"}
       </p>
 
-      <div className="grid gap-6">
-        {reports.map((report) => (
-          <Card
-            key={report.id}
-            className="border-border/60 bg-gradient-card shadow-medium"
-          >
-            <CardHeader className="pb-4">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <CardTitle className="text-lg font-semibold text-foreground">
-                  Reporte #{report.id}
-                </CardTitle>
-                <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-                  <Calendar className="h-4 w-4 shrink-0 text-primary" />
-                  <span>{formatCreatedAt(report.createdAt)}</span>
-                </div>
-              </div>
-            </CardHeader>
-
-            <CardContent className="space-y-5">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                  <UserX className="h-4 w-4 shrink-0 text-primary" />
+      <div className="hidden overflow-hidden rounded-xl border border-border/60 bg-card shadow-soft md:block">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[760px] border-collapse text-left text-sm">
+            <thead>
+              <tr className="border-b border-border/60 bg-muted/40">
+                <th className="px-5 py-4 font-semibold text-foreground">#</th>
+                <th className="px-5 py-4 font-semibold text-foreground">
                   Detalles del impostor
-                </div>
-                <p className="whitespace-pre-wrap rounded-md bg-muted/40 px-4 py-3 text-sm leading-relaxed text-foreground">
-                  {report.impostorDetails}
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                  <Phone className="h-4 w-4 shrink-0 text-primary" />
+                </th>
+                <th className="px-5 py-4 font-semibold text-foreground">
                   Contacto
-                </div>
-                <p className="rounded-md bg-muted/40 px-4 py-3 text-sm text-foreground">
-                  {report.contactInfo}
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                  <MessageSquare className="h-4 w-4 shrink-0 text-primary" />
+                </th>
+                <th className="px-5 py-4 font-semibold text-foreground">
                   Comentarios
-                </div>
-                <p className="whitespace-pre-wrap rounded-md bg-muted/40 px-4 py-3 text-sm leading-relaxed text-foreground">
-                  {report.comments}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+                </th>
+                <th className="px-5 py-4 font-semibold text-foreground">
+                  Fecha de creación
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {reports.map((report) => (
+                <tr
+                  key={report.id}
+                  className="border-b border-border/40 align-top last:border-b-0 hover:bg-muted/20"
+                >
+                  <td className="px-5 py-4 font-medium text-foreground">
+                    {report.id}
+                  </td>
+                  <td className="max-w-xs px-5 py-4 whitespace-pre-wrap text-foreground">
+                    {report.impostorDetails}
+                  </td>
+                  <td className="max-w-[180px] px-5 py-4 text-foreground">
+                    {report.contactInfo}
+                  </td>
+                  <td className="max-w-sm px-5 py-4 whitespace-pre-wrap text-foreground">
+                    {report.comments.trim() || (
+                      <span className="text-muted-foreground italic">
+                        Sin comentarios
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-5 py-4 text-muted-foreground">
+                    <time dateTime={report.createdAt}>
+                      {formatCreatedAt(report.createdAt)}
+                    </time>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="space-y-4 md:hidden">
+        {reports.map((report) => (
+          <MobileReportCard key={report.id} report={report} />
         ))}
       </div>
     </div>
